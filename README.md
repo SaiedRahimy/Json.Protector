@@ -18,8 +18,9 @@ Installation
 
 You can install this package via NuGet:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   bashCopy codedotnet add package Json.Protector   `
-
+```bash
+dotnet add package Json.Protector   
+```
 Configuration
 -------------
 
@@ -27,14 +28,38 @@ Configuration
 
 To configure Json.Protector with **Newtonsoft.Json**, add the following to your Program.cs file:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   csharpCopy codebuilder.Services.AddSingleton();  builder.Services.AddControllers()      .AddNewtonsoftJson(options =>      {          options.SerializerSettings.Converters.Add(              builder.Services.BuildServiceProvider().GetRequiredService()          );      });   `
+```csharp
+builder.Services.AddSingleton<NewtonsoftJsonProtectorTypeConverter>();
 
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.Converters.Add(
+            builder.Services.BuildServiceProvider().GetRequiredService<NewtonsoftJsonProtectorTypeConverter>()
+        );
+    });
+
+
+```
 ### Using System.Text.Json
 
 To configure Json.Protector with **System.Text.Json**, use the following code:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   csharpCopy codebuilder.Services.AddSingleton>(sp =>      new SystemTextJsonJsonProtectorTypeConverter(sp.GetRequiredService())  );  builder.Services.AddControllers()      .AddJsonOptions(options =>      {          options.JsonSerializerOptions.Converters.Add(              builder.Services.BuildServiceProvider().GetRequiredService>()          );      });   `
+```csharp
+builder.Services.AddSingleton<JsonConverter<JsonProtectorType>>(sp =>
+    new SystemTextJsonJsonProtectorTypeConverter(sp.GetRequiredService<IEncryptionProvider>())
+);
 
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(
+            builder.Services.BuildServiceProvider().GetRequiredService<JsonConverter<JsonProtectorType>>()
+        );
+    });
+
+
+```
 Usage
 -----
 
@@ -42,8 +67,22 @@ To encrypt and protect your sensitive data, use the JsonProtectorType.This type 
 
 Here’s an example:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   csharpCopy codepublic class UserProfile  {      public string Name { get; set; }      public JsonProtectorType SensitiveInfo { get; set; }  }  // Example Data  var profile = new UserProfile  {      Name = "John Doe",      SensitiveInfo = "This is encrypted data"  };   `
+```csharp
+public class UserProfile
+{
+    public string Name { get; set; }
+    public JsonProtectorType SensitiveInfo { get; set; }
+}
 
+// Example Data
+var profile = new UserProfile
+{
+    Name = "saied rahimi",
+    SensitiveInfo = "This is encrypted data"
+};
+
+
+```
 When serialized, SensitiveInfo will be automatically encrypted. Upon deserialization, it will be decrypted back to its original value.
 
 Contributing
