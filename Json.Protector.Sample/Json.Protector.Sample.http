@@ -1,0 +1,6 @@
+@Json.Protector.Sample_HostAddress = http://localhost:5157
+
+GET {{Json.Protector.Sample_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

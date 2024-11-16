@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Protector", "Src\Json.Protector\Json.Protector.csproj", "{A5828F81-F3D6-421E-8ABA-E83003967FB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Json.Protector", "Src\Json.Protector\Json.Protector.csproj", "{A5828F81-F3D6-421E-8ABA-E83003967FB0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{0390D042-2F7C-4892-B557-C17D2F4A5815}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample", "Sample", "{E4ED3394-32A5-41A6-9656-85A0120BF223}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Protector.Sample", "Json.Protector.Sample\Json.Protector.Sample.csproj", "{4126BAC9-A05B-4798-8D18-9AABF5C6D9ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +21,17 @@ Global
 		{A5828F81-F3D6-421E-8ABA-E83003967FB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5828F81-F3D6-421E-8ABA-E83003967FB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5828F81-F3D6-421E-8ABA-E83003967FB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4126BAC9-A05B-4798-8D18-9AABF5C6D9ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4126BAC9-A05B-4798-8D18-9AABF5C6D9ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4126BAC9-A05B-4798-8D18-9AABF5C6D9ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4126BAC9-A05B-4798-8D18-9AABF5C6D9ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A5828F81-F3D6-421E-8ABA-E83003967FB0} = {0390D042-2F7C-4892-B557-C17D2F4A5815}
+		{4126BAC9-A05B-4798-8D18-9AABF5C6D9ED} = {E4ED3394-32A5-41A6-9656-85A0120BF223}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C58F84FF-AA06-46A8-A52A-390266D37E8D}

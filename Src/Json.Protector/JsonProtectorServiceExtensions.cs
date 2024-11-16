@@ -12,7 +12,7 @@ namespace Json.Protector
 {
     public static class JsonProtectorServiceExtensions
     {
-        public static IServiceCollection AddJsonProtector(this IServiceCollection services, Action<JsonProtectorOptions> options)
+        public static IServiceCollection AddJsonProtector(this IServiceCollection services, Action<JsonProtectorOptions>? options=null)
         {
             if (options != null)
             {
