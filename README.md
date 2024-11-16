@@ -29,6 +29,8 @@ Configuration
 To configure Json.Protector with **Newtonsoft.Json**, add the following to your Program.cs file:
 
 ```csharp
+builder.Services.AddJsonProtector();
+
 builder.Services.AddSingleton<NewtonsoftJsonProtectorTypeConverter>();
 
 builder.Services.AddControllers()
@@ -46,6 +48,8 @@ builder.Services.AddControllers()
 To configure Json.Protector with **System.Text.Json**, use the following code:
 
 ```csharp
+builder.Services.AddJsonProtector();
+
 builder.Services.AddSingleton<JsonConverter<JsonProtectorType>>(sp =>
     new SystemTextJsonJsonProtectorTypeConverter(sp.GetRequiredService<IEncryptionProvider>())
 );
