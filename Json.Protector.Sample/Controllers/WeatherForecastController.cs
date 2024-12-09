@@ -18,7 +18,8 @@ namespace Json.Protector.Sample.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
+        [HttpGet]
+        [Route("GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
@@ -30,16 +31,51 @@ namespace Json.Protector.Sample.Controllers
             .ToArray();
         }
 
-        [HttpPost(Name = "PostWeatherForecast")]
+
+        [HttpGet]
+        [Route("GetNewtonsoftDataAttributeWeatherForecast")]
+        public IEnumerable<WeatherForecastNewtonsoftDataAttribute> GetNewtonsoftDataAttributeWeatherForecast()
+        {
+            return Enumerable.Range(1, 5).Select(index => new WeatherForecastNewtonsoftDataAttribute
+            {
+                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                TemperatureC = Random.Shared.Next(-20, 55),
+                Summary = Summaries[Random.Shared.Next(Summaries.Length)],
+                Summary2 ="Test"+ Summaries[Random.Shared.Next(Summaries.Length)]
+            })
+            .ToArray();
+        }
+
+       
+
+        [HttpPost]
+        [Route("PostWeatherForecast")]
         public IEnumerable<WeatherForecastWithOutEncrypt> Post(IEnumerable<WeatherForecast> list)
         {
             return list.Select(c => new WeatherForecastWithOutEncrypt
             {
                 Date = c.Date,
                 TemperatureC = c.TemperatureC,
-                Summary = c.Summary,
+                SummaryText = c.Summary,
 
             }).ToList();
         }
+
+        [HttpPost]
+        [Route("PostWeatherForecastAttribute")]
+        public IEnumerable<WeatherForecastWithOutEncrypt> PostWeatherForecastAttribute(IEnumerable<WeatherForecastNewtonsoftDataAttribute> list)
+        {
+            var result= list.Select(c => new WeatherForecastWithOutEncrypt
+            {
+                Date = c.Date,
+                TemperatureC = c.TemperatureC,
+                SummaryText = c.Summary.ToString(),
+
+            }).ToList();
+
+            return result;
+        }
+
+
     }
 }

@@ -8,11 +8,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddJsonProtector();
 
-var useNewtonSoft = true;
+builder.Services.AddJsonProtector(options =>
+{
+    options.UseDefaultKey=false;
+    options.Key= "Yor Key";
+    options.IV="Yor Iv ";
+    
+});
+
+var useNewtonSoft = false;
 if (useNewtonSoft)
 {
     #region newtonSoft
     builder.Services.AddSingleton<NewtonsoftJsonProtectorTypeConverter>();
+    builder.Services.AddSingleton<NewtonsoftDataProtector>();
 
     builder.Services.AddControllers()
         .AddNewtonsoftJson(options =>
@@ -20,14 +29,19 @@ if (useNewtonSoft)
             options.SerializerSettings.Converters.Add(
                 builder.Services.BuildServiceProvider().GetRequiredService<NewtonsoftJsonProtectorTypeConverter>()
             );
+
+            builder.Services.BuildServiceProvider().GetRequiredService<NewtonsoftDataProtector>();
+
         });
     #endregion
 }
 else
 {
+  
     builder.Services.AddSingleton<JsonConverter<JsonProtectorType>>(sp =>
-    new SystemTextJsonJsonProtectorTypeConverter(sp.GetRequiredService<IEncryptionProvider>())
-);
+    new SystemTextJsonJsonProtectorTypeConverter(sp.GetRequiredService<IEncryptionProvider>()));
+
+  
     builder.Services.AddControllers()
         .AddJsonOptions(options =>
         {
@@ -35,6 +49,9 @@ else
             options.JsonSerializerOptions.Converters.Add(
                 builder.Services.BuildServiceProvider().GetRequiredService<JsonConverter<JsonProtectorType>>()
             );
+
+
+
         });
 }
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

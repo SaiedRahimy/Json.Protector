@@ -23,13 +23,26 @@ dotnet add package Json.Protector
 ```
 Configuration
 -------------
+### Using Use Default Key
+```csharp
+builder.Services.AddJsonProtector();
+```
+### Using Set Encryption Key
+```csharp
+builder.Services.AddJsonProtector(options =>
+{
+    options.UseDefaultKey=false;
+    options.Key= "Yor Key";
+    options.IV="Yor Iv ";
+    
+});
+```
 
 ### Using Newtonsoft.Json
 
 To configure Json.Protector with **Newtonsoft.Json**, add the following to your Program.cs file:
 
 ```csharp
-builder.Services.AddJsonProtector();
 
 builder.Services.AddSingleton<NewtonsoftJsonProtectorTypeConverter>();
 
@@ -48,8 +61,6 @@ builder.Services.AddControllers()
 To configure Json.Protector with **System.Text.Json**, use the following code:
 
 ```csharp
-builder.Services.AddJsonProtector();
-
 builder.Services.AddSingleton<JsonConverter<JsonProtectorType>>(sp =>
     new SystemTextJsonJsonProtectorTypeConverter(sp.GetRequiredService<IEncryptionProvider>())
 );
@@ -87,6 +98,28 @@ var profile = new UserProfile
 
 
 ```
+
+or
+
+```csharp
+public class UserProfile
+{
+    public string Name { get; set; }
+
+     [JsonConverter(typeof(NewtonsoftDataProtector))]
+    public string SensitiveInfo { get; set; }
+}
+
+// Example Data
+var profile = new UserProfile
+{
+    Name = "saied rahimi",
+    SensitiveInfo = "This is encrypted data"
+};
+
+
+```
+
 When serialized, SensitiveInfo will be automatically encrypted. Upon deserialization, it will be decrypted back to its original value.
 
 Contributing
