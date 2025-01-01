@@ -32,8 +32,8 @@ builder.Services.AddJsonProtector();
 builder.Services.AddJsonProtector(options =>
 {
     options.UseDefaultKey=false;
-    options.Key= "Yor Key";
-    options.IV="Yor Iv ";
+    options.Key = "YoUr Key";
+    options.IV= "Your Iv ";
     
 });
 ```
