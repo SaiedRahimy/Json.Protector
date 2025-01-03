@@ -31,10 +31,10 @@ builder.Services.AddJsonProtector();
 ```csharp
 builder.Services.AddJsonProtector(options =>
 {
-    options.UseDefaultKey=false;
-    options.Key = "YoUr Key";
-    options.IV= "Your Iv ";
-    
+    options.UseDefaultKey = false;
+    options.Key = "Your Key-wffJGGHG#wrwfsCsddDDFgD$#@";
+    options.IV = "Your Iv-eF3RFfdgdsE";
+
 });
 ```
 
@@ -44,15 +44,18 @@ To configure Json.Protector with **Newtonsoft.Json**, add the following to your 
 
 ```csharp
 
-builder.Services.AddSingleton<NewtonsoftJsonProtectorTypeConverter>();
+ builder.Services.AddSingleton<NewtonsoftJsonProtectorTypeConverter>();
+ builder.Services.AddSingleton<NewtonsoftDataProtector>();
 
-builder.Services.AddControllers()
-    .AddNewtonsoftJson(options =>
-    {
-        options.SerializerSettings.Converters.Add(
-            builder.Services.BuildServiceProvider().GetRequiredService<NewtonsoftJsonProtectorTypeConverter>()
-        );
-    });
+ builder.Services.AddControllers().AddNewtonsoftJson(options =>
+     {
+         using var serviceProvider = builder.Services.BuildServiceProvider();
+         
+         // Register the converter with dependency injection
+         options.SerializerSettings.Converters.Add(serviceProvider.GetRequiredService<NewtonsoftJsonProtectorTypeConverter>());
+         serviceProvider.GetRequiredService<NewtonsoftDataProtector>();
+
+     });
 
 
 ```
@@ -61,17 +64,16 @@ builder.Services.AddControllers()
 To configure Json.Protector with **System.Text.Json**, use the following code:
 
 ```csharp
-builder.Services.AddSingleton<JsonConverter<JsonProtectorType>>(sp =>
-    new SystemTextJsonJsonProtectorTypeConverter(sp.GetRequiredService<IEncryptionProvider>())
-);
+ builder.Services.AddSingleton<JsonConverter<JsonProtectorType>>(sp => new SystemTextJsonJsonProtectorTypeConverter(sp.GetRequiredService<IEncryptionProvider>()));
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.Converters.Add(
-            builder.Services.BuildServiceProvider().GetRequiredService<JsonConverter<JsonProtectorType>>()
-        );
-    });
+ builder.Services.AddControllers().AddJsonOptions(options =>
+     {
+         using var serviceProvider = builder.Services.BuildServiceProvider();
+
+         // Register the converter with dependency injection
+         options.JsonSerializerOptions.Converters.Add(serviceProvider.GetRequiredService<JsonConverter<JsonProtectorType>>());
+
+     });
 
 
 ```
@@ -116,6 +118,25 @@ var profile = new UserProfile
     Name = "saied rahimi",
     SensitiveInfo = "This is encrypted data"
 };
+
+
+```
+
+
+Result
+-----
+```json
+//encrypted result
+{
+  "name": "saied rahimi",
+  "sensitiveInfo": "itNydZU4Y33CCPe/Bp45wOZwuI8CEofwCnO6m5VNhFs="
+}
+
+//decrypted result
+{
+  "name": "saied rahimi",
+  "message": "This is encrypted data"
+}
 
 
 ```

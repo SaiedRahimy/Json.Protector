@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Xml.Linq;
 
 namespace Json.Protector.Sample.Controllers
 {
@@ -16,6 +17,8 @@ namespace Json.Protector.Sample.Controllers
         public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
             _logger = logger;
+
+
         }
 
         [HttpGet]
@@ -41,12 +44,11 @@ namespace Json.Protector.Sample.Controllers
                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
                 TemperatureC = Random.Shared.Next(-20, 55),
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)],
-                Summary2 ="Test"+ Summaries[Random.Shared.Next(Summaries.Length)]
+                Summary2 = "Test" + Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
-        }
 
-       
+        }
 
         [HttpPost]
         [Route("PostWeatherForecast")]
@@ -65,7 +67,7 @@ namespace Json.Protector.Sample.Controllers
         [Route("PostWeatherForecastAttribute")]
         public IEnumerable<WeatherForecastWithOutEncrypt> PostWeatherForecastAttribute(IEnumerable<WeatherForecastNewtonsoftDataAttribute> list)
         {
-            var result= list.Select(c => new WeatherForecastWithOutEncrypt
+            var result = list.Select(c => new WeatherForecastWithOutEncrypt
             {
                 Date = c.Date,
                 TemperatureC = c.TemperatureC,
@@ -76,6 +78,45 @@ namespace Json.Protector.Sample.Controllers
             return result;
         }
 
+
+
+        [HttpGet]
+        [Route("GeUserProfile")]
+        public UserProfile GeUserProfile()
+        {
+            var profile = new UserProfile
+            {
+                Name = "saied rahimi",
+                SensitiveInfo = "This is encrypted data"
+            };
+
+            return profile;
+        }
+
+        [HttpPost]
+        [Route("PostUserProfile")]
+        public UserProfileWithOutEncrypt PostUserProfile(UserProfile model)
+        {
+            return new UserProfileWithOutEncrypt
+            {
+                Name = model.Name,
+                Message = model.SensitiveInfo,
+
+            };
+        }
+
+
+        [HttpPost]
+        [Route("PostUserProfileAttribute")]
+        public UserProfileWithOutEncrypt PostUserProfileAttribute(UserProfileAttribute model)
+        {
+            return new UserProfileWithOutEncrypt
+            {
+                Name = model.Name,
+                Message = model.SensitiveInfo,
+
+            };
+        }
 
     }
 }

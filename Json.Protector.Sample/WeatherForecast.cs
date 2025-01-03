@@ -38,5 +38,7 @@ namespace Json.Protector.Sample
         public string? Summary2 { get; set; }
     }
 
+    
+
 
 }

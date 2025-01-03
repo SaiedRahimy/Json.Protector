@@ -6,51 +6,52 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddJsonProtector();
+var useDefaultKey = true;
 
-builder.Services.AddJsonProtector(options =>
+if (useDefaultKey)
 {
-    options.UseDefaultKey=false;
-    options.Key= "Yor Key";
-    options.IV="Yor Iv ";
-    
-});
+    builder.Services.AddJsonProtector();
+}
+else
+{
+    builder.Services.AddJsonProtector(options =>
+    {
+        options.UseDefaultKey = false;
+        options.Key = "Your Key-wffJGGHG#wrwfsCsddDDFgD$#@";
+        options.IV = "Your Iv-eF3RFfdgdsE";
 
-var useNewtonSoft = false;
+    });
+}
+
+var useNewtonSoft = true;
 if (useNewtonSoft)
 {
     #region newtonSoft
     builder.Services.AddSingleton<NewtonsoftJsonProtectorTypeConverter>();
     builder.Services.AddSingleton<NewtonsoftDataProtector>();
 
-    builder.Services.AddControllers()
-        .AddNewtonsoftJson(options =>
+    builder.Services.AddControllers().AddNewtonsoftJson(options =>
         {
-            options.SerializerSettings.Converters.Add(
-                builder.Services.BuildServiceProvider().GetRequiredService<NewtonsoftJsonProtectorTypeConverter>()
-            );
-
-            builder.Services.BuildServiceProvider().GetRequiredService<NewtonsoftDataProtector>();
+            using var serviceProvider = builder.Services.BuildServiceProvider();
+            
+            // Register the converter with dependency injection
+            options.SerializerSettings.Converters.Add(serviceProvider.GetRequiredService<NewtonsoftJsonProtectorTypeConverter>());
+            serviceProvider.GetRequiredService<NewtonsoftDataProtector>();
 
         });
     #endregion
 }
 else
 {
-  
-    builder.Services.AddSingleton<JsonConverter<JsonProtectorType>>(sp =>
-    new SystemTextJsonJsonProtectorTypeConverter(sp.GetRequiredService<IEncryptionProvider>()));
 
-  
-    builder.Services.AddControllers()
-        .AddJsonOptions(options =>
+    builder.Services.AddSingleton<JsonConverter<JsonProtectorType>>(sp => new SystemTextJsonJsonProtectorTypeConverter(sp.GetRequiredService<IEncryptionProvider>()));
+
+    builder.Services.AddControllers().AddJsonOptions(options =>
         {
+            using var serviceProvider = builder.Services.BuildServiceProvider();
+
             // Register the converter with dependency injection
-            options.JsonSerializerOptions.Converters.Add(
-                builder.Services.BuildServiceProvider().GetRequiredService<JsonConverter<JsonProtectorType>>()
-            );
-
-
+            options.JsonSerializerOptions.Converters.Add(serviceProvider.GetRequiredService<JsonConverter<JsonProtectorType>>());
 
         });
 }
