@@ -34,7 +34,7 @@ namespace Json.Protector.Converter
             }
             catch (Exception ex)
             {
-                throw new JsonSerializationException("Invalid JsonProtectorType format");
+                throw new JsonSerializationException(ex is DataValidityExpiredException ? ex.Message : "Invalid JsonProtectorType format");
             }
         }
     }

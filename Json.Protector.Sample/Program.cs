@@ -6,7 +6,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-var useDefaultKey = true;
+var useDefaultKey = false;
+var validityPeriod = false;
+var throwExceptionIfTimeExpired = false;
 
 if (useDefaultKey)
 {
@@ -19,6 +21,8 @@ else
         options.UseDefaultKey = false;
         options.Key = "Your Key-wffJGGHG#wrwfsCsddDDFgD$#@";
         options.IV = "Your Iv-eF3RFfdgdsE";
+        options.ValidityPeriod = validityPeriod ? TimeSpan.FromSeconds(20) : null;
+        options.ThrowExceptionIfTimeExpired = throwExceptionIfTimeExpired;
 
     });
 }
@@ -33,7 +37,7 @@ if (useNewtonSoft)
     builder.Services.AddControllers().AddNewtonsoftJson(options =>
         {
             using var serviceProvider = builder.Services.BuildServiceProvider();
-            
+
             // Register the converter with dependency injection
             options.SerializerSettings.Converters.Add(serviceProvider.GetRequiredService<NewtonsoftJsonProtectorTypeConverter>());
             serviceProvider.GetRequiredService<NewtonsoftDataProtector>();

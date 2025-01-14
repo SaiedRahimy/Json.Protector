@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
+using Json.Protector.Models;
+using System.Reflection;
 
 namespace Json.Protector
 {
@@ -45,8 +47,61 @@ namespace Json.Protector
 
 
         }
+        private string AddTimeBoundData(string plainText)
+        {
+            if (_options.ValidityPeriod.HasValue)
+            {
 
-       
+                var model = new ExpirationGuardDto
+                {
+                    Data = plainText,
+                    ExpireDate = DateTime.Now.AddMilliseconds(_options.ValidityPeriod.Value.TotalMilliseconds)
+                };
+
+                plainText = JsonConvert.SerializeObject(model, new JsonSerializerSettings
+                {
+                    Formatting = Formatting.None,
+                    NullValueHandling = NullValueHandling.Ignore,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                });
+
+
+            }
+
+            return plainText;
+        }
+
+        private string CheckTimeBoundExpiration(string strData)
+        {
+            if (_options.ValidityPeriod.HasValue)
+            {
+                var data = JsonConvert.DeserializeObject<ExpirationGuardDto>(strData, new JsonSerializerSettings
+                {
+                    Formatting = Newtonsoft.Json.Formatting.None,
+                    NullValueHandling = NullValueHandling.Ignore,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                });
+
+
+                if (data.ExpireDate >= DateTime.Now)
+                {
+
+                    return data.Data;
+                }
+                else if (_options.ThrowExceptionIfTimeExpired == false)
+                {
+                    return null;
+                }
+
+                throw new DataValidityExpiredException();
+
+            }
+
+            return strData;
+        }
+
+
+
         public string Encrypt(string plainText)
         {
             using (var aesAlg = AesManaged.Create())
@@ -62,7 +117,7 @@ namespace Json.Protector
                     {
                         using (var swEncrypt = new StreamWriter(csEncrypt))
                         {
-                            swEncrypt.Write(plainText);
+                            swEncrypt.Write(AddTimeBoundData(plainText));
                         }
                     }
                     var encryptedBytes = msEncrypt.ToArray();
@@ -93,7 +148,7 @@ namespace Json.Protector
                     {
                         using (var swEncrypt = new StreamWriter(csEncrypt))
                         {
-                            swEncrypt.Write(plainText);
+                            swEncrypt.Write(AddTimeBoundData(plainText));
                         }
                     }
                     var encryptedBytes = msEncrypt.ToArray();
@@ -117,7 +172,11 @@ namespace Json.Protector
                     {
                         using (var srDecrypt = new StreamReader(csDecrypt))
                         {
-                            return srDecrypt.ReadToEnd();
+                            var strData = srDecrypt.ReadToEnd();
+
+                            strData = CheckTimeBoundExpiration(strData);
+
+                            return strData;
                         }
                     }
                 }
@@ -142,6 +201,8 @@ namespace Json.Protector
                             using (var srDecrypt = new StreamReader(csDecrypt))
                             {
                                 var strData = srDecrypt.ReadToEnd();
+
+                                strData = CheckTimeBoundExpiration(strData);
 
                                 var data = JsonConvert.DeserializeObject<T>(strData, new JsonSerializerSettings
                                 {

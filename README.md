@@ -37,7 +37,18 @@ builder.Services.AddJsonProtector(options =>
 
 });
 ```
+### Using Set Encryption Key With ValidityPeriod
+```csharp
+builder.Services.AddJsonProtector(options =>
+{
+    options.UseDefaultKey = false;
+    options.Key = "Your Key-wffJGGHG#wrwfsCsddDDFgD$#@";
+    options.IV = "Your Iv-eF3RFfdgdsE";
+    options.ValidityPeriod = TimeSpan.FromSeconds(20);
+    options.ThrowExceptionIfTimeExpired = true; 
 
+});
+```
 ### Using Newtonsoft.Json
 
 To configure Json.Protector with **Newtonsoft.Json**, add the following to your Program.cs file:

@@ -19,7 +19,7 @@ namespace Json.Protector
 
         public override string ToString() => _value;
 
-        public int Length => _value.Length;
+        public int Length => _value is not null ? _value.Length : 0;
 
         public char this[int index] => _value[index];
 
