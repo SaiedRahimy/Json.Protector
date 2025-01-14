@@ -4,7 +4,7 @@
     <!--<TargetFramework>netstandard2.1</TargetFramework>-->
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
-	  <Version>1.1.0</Version>
+	  <Version>1.2.0</Version>
 	  <Authors>Saied Rahimi </Authors>
 	  <Description>implemented in .NET to protect critical data during serialization and deserialization of data in JSON format for Newtonsoft and System.Text.Json packages</Description>
 	  <PackageProjectUrl>https://github.com/SaiedRahimy/Json.Protector</PackageProjectUrl>
